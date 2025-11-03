@@ -41,6 +41,8 @@ export const ImageUpload: FC<ImageUploadProps> = ({ handleChange }) => {
     if (files.length > 1) {
       setError("Only one image can be uploaded.");
       return;
+    } else if (files.length === 1) {
+      setError(null);
     }
 
     const file = e.dataTransfer.files[0];
@@ -65,6 +67,7 @@ export const ImageUpload: FC<ImageUploadProps> = ({ handleChange }) => {
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        data-testid="drop-zone"
       >
         <label
           htmlFor="file-upload"
@@ -83,10 +86,15 @@ export const ImageUpload: FC<ImageUploadProps> = ({ handleChange }) => {
             className="hidden"
             accept="image/*"
             onChange={handleChange}
+            data-testid="file-upload"
           />
         </label>
       </div>
-      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
+      {error && (
+        <p data-testid="error-message" className="mt-2 text-sm text-red-500">
+          {error}
+        </p>
+      )}
     </div>
   );
 };
