@@ -26,7 +26,7 @@ export default function ProfileCreatorPage() {
 
   // Handler for image file selection
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setProfile((prev) => ({
