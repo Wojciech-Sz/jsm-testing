@@ -24,9 +24,7 @@ import {
 import dbConnect from "../mongoose";
 import { createInteraction } from "./interaction.action";
 
-export async function createQuestion(
-  params: CreateQuestionParams
-): Promise<ActionResponse<Question>> {
+export async function createQuestion(params: CreateQuestionParams): Promise<ActionResponse<Question>> {
   const validationResult = await action({
     params,
     schema: AskQuestionSchema,
@@ -44,10 +42,7 @@ export async function createQuestion(
   session.startTransaction();
 
   try {
-    const [question] = await Question.create(
-      [{ title, content, author: userId }],
-      { session }
-    );
+    const [question] = await Question.create([{ title, content, author: userId }], { session });
 
     if (!question) throw new Error("Failed to create the question");
 
@@ -70,11 +65,7 @@ export async function createQuestion(
 
     await TagQuestion.insertMany(tagQuestionDocuments, { session });
 
-    await Question.findByIdAndUpdate(
-      question._id,
-      { $push: { tags: { $each: tagIds } } },
-      { session }
-    );
+    await Question.findByIdAndUpdate(question._id, { $push: { tags: { $each: tagIds } } }, { session });
 
     // log the interaction
     after(async () => {
@@ -97,9 +88,7 @@ export async function createQuestion(
   }
 }
 
-export async function editQuestion(
-  params: EditQuestionParams
-): Promise<ActionResponse<IQuestionDoc>> {
+export async function editQuestion(params: EditQuestionParams): Promise<ActionResponse<IQuestionDoc>> {
   const validationResult = await action({
     params,
     schema: EditQuestionSchema,
@@ -132,15 +121,11 @@ export async function editQuestion(
 
     // Determine tags to add and remove
     const tagsToAdd = tags.filter(
-      (tag) =>
-        !question.tags.some(
-          (t: ITagDoc) => t.name.toLowerCase() === tag.toLowerCase()
-        )
+      (tag) => !question.tags.some((t: ITagDoc) => t.name.toLowerCase() === tag.toLowerCase())
     );
 
     const tagsToRemove = question.tags.filter(
-      (tag: ITagDoc) =>
-        !tags.some((t) => t.toLowerCase() === tag.name.toLowerCase())
+      (tag: ITagDoc) => !tags.some((t) => t.toLowerCase() === tag.name.toLowerCase())
     );
 
     // Add new tags
@@ -164,22 +149,12 @@ export async function editQuestion(
     if (tagsToRemove.length > 0) {
       const tagIdsToRemove = tagsToRemove.map((tag: ITagDoc) => tag._id);
 
-      await Tag.updateMany(
-        { _id: { $in: tagIdsToRemove } },
-        { $inc: { questions: -1 } },
-        { session }
-      );
+      await Tag.updateMany({ _id: { $in: tagIdsToRemove } }, { $inc: { questions: -1 } }, { session });
 
-      await TagQuestion.deleteMany(
-        { tag: { $in: tagIdsToRemove }, question: questionId },
-        { session }
-      );
+      await TagQuestion.deleteMany({ tag: { $in: tagIdsToRemove }, question: questionId }, { session });
 
       question.tags = question.tags.filter(
-        (tag: mongoose.Types.ObjectId) =>
-          !tagIdsToRemove.some((id: mongoose.Types.ObjectId) =>
-            id.equals(tag._id)
-          )
+        (tag: mongoose.Types.ObjectId) => !tagIdsToRemove.some((id: mongoose.Types.ObjectId) => id.equals(tag._id))
       );
     }
 
@@ -228,12 +203,7 @@ export const getQuestion = cache(async function getQuestion(
   }
 });
 
-export async function getRecommendedQuestions({
-  userId,
-  query,
-  skip,
-  limit,
-}: RecommendationParams) {
+export async function getRecommendedQuestions({ userId, query, skip, limit }: RecommendationParams) {
   // Get user's recent interactions
   const interactions = await Interaction.find({
     user: new Types.ObjectId(userId),
@@ -252,9 +222,7 @@ export async function getRecommendedQuestions({
   }).select("tags");
 
   // Get unique tags
-  const allTags = interactedQuestions.flatMap((q) =>
-    q.tags.map((tag: Types.ObjectId) => tag.toString())
-  );
+  const allTags = interactedQuestions.flatMap((q) => q.tags.map((tag: Types.ObjectId) => tag.toString()));
 
   // Remove duplicates
   const uniqueTagIds = [...new Set(allTags)];
@@ -269,10 +237,7 @@ export async function getRecommendedQuestions({
   };
 
   if (query) {
-    recommendedQuery.$or = [
-      { title: { $regex: query, $options: "i" } },
-      { content: { $regex: query, $options: "i" } },
-    ];
+    recommendedQuery.$or = [{ title: { $regex: query, $options: "i" } }, { content: { $regex: query, $options: "i" } }];
   }
 
   const total = await Question.countDocuments(recommendedQuery);
@@ -336,10 +301,7 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<
 
     // Search
     if (query) {
-      filterQuery.$or = [
-        { title: { $regex: query, $options: "i" } },
-        { content: { $regex: query, $options: "i" } },
-      ];
+      filterQuery.$or = [{ title: { $regex: query, $options: "i" } }, { content: { $regex: query, $options: "i" } }];
     }
 
     // Filters
@@ -383,9 +345,7 @@ export async function getQuestions(params: PaginatedSearchParams): Promise<
   }
 }
 
-export async function incrementViews(
-  params: IncrementViewsParams
-): Promise<ActionResponse<{ views: number }>> {
+export async function incrementViews(params: IncrementViewsParams): Promise<ActionResponse<{ views: number }>> {
   const validationResult = await action({
     params,
     schema: IncrementViewsSchema,
@@ -418,9 +378,7 @@ export async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
   try {
     await dbConnect();
 
-    const questions = await Question.find()
-      .sort({ views: -1, upvotes: -1 })
-      .limit(5);
+    const questions = await Question.find().sort({ views: -1, upvotes: -1 }).limit(5);
 
     return {
       success: true,
@@ -431,9 +389,7 @@ export async function getHotQuestions(): Promise<ActionResponse<Question[]>> {
   }
 }
 
-export async function deleteQuestion(
-  params: DeleteQuestionParams
-): Promise<ActionResponse> {
+export async function deleteQuestion(params: DeleteQuestionParams): Promise<ActionResponse> {
   const validationResult = await action({
     params,
     schema: DeleteQuestionSchema,
@@ -454,8 +410,7 @@ export async function deleteQuestion(
     const question = await Question.findById(questionId).session(session);
     if (!question) throw new Error("Question not found");
 
-    if (question.author.toString() !== user?.id)
-      throw new Error("You are not authorized to delete this question");
+    if (question.author.toString() !== user?.id) throw new Error("You are not authorized to delete this question");
 
     // Delete related entries inside the transaction
     await Collection.deleteMany({ question: questionId }).session(session);
@@ -463,11 +418,7 @@ export async function deleteQuestion(
 
     // For all tags of Question, find them and reduce their count
     if (question.tags.length > 0) {
-      await Tag.updateMany(
-        { _id: { $in: question.tags } },
-        { $inc: { questions: -1 } },
-        { session }
-      );
+      await Tag.updateMany({ _id: { $in: question.tags } }, { $inc: { questions: -1 } }, { session });
     }
 
     //  Remove all votes of the question
@@ -477,9 +428,7 @@ export async function deleteQuestion(
     }).session(session);
 
     // Remove all answers and their votes of the question
-    const answers = await Answer.find({ question: questionId }).session(
-      session
-    );
+    const answers = await Answer.find({ question: questionId }).session(session);
 
     if (answers.length > 0) {
       await Answer.deleteMany({ question: questionId }).session(session);
