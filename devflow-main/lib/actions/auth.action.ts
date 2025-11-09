@@ -12,9 +12,7 @@ import handleError from "../handlers/error";
 import { NotFoundError } from "../http-errors";
 import { SignInSchema, SignUpSchema } from "../validations";
 
-export async function signUpWithCredentials(
-  params: AuthCredentials
-): Promise<ActionResponse> {
+export async function signUpWithCredentials(params: AuthCredentials): Promise<ActionResponse> {
   const validationResult = await action({
     params,
     schema: SignUpSchema,
@@ -96,10 +94,7 @@ export async function signInWithCredentials(
     });
     if (!existingAccount) throw new NotFoundError("Account");
 
-    const passwordMatch = await bcrypt.compare(
-      password,
-      existingAccount.password
-    );
+    const passwordMatch = await bcrypt.compare(password, existingAccount.password);
     if (!passwordMatch) throw new Error("Invalid password");
 
     await signIn("credentials", {

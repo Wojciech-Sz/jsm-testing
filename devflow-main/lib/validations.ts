@@ -1,9 +1,7 @@
 import { z } from "zod";
 
 export const SignInSchema = z.object({
-  email: z
-    .email({ message: "Please provide a valid email address." })
-    .min(1, { message: "Email is required." }),
+  email: z.email({ message: "Please provide a valid email address." }).min(1, { message: "Email is required." }),
 
   password: z
     .string()
@@ -28,10 +26,7 @@ export const SignUpSchema = z.object({
       message: "Name can only contain letters and spaces.",
     }),
 
-  email: z
-    .string()
-    .min(1, { message: "Email is required." })
-    .email({ message: "Please provide a valid email address." }),
+  email: z.email({ message: "Please provide a valid email address." }).min(1, { message: "Email is required." }),
 
   password: z
     .string()
@@ -216,16 +211,7 @@ export const DeleteAnswerSchema = z.object({
 });
 
 export const CreateInteractionSchema = z.object({
-  action: z.enum([
-    "view",
-    "upvote",
-    "downvote",
-    "bookmark",
-    "post",
-    "edit",
-    "delete",
-    "search",
-  ]),
+  action: z.enum(["view", "upvote", "downvote", "bookmark", "post", "edit", "delete", "search"]),
   actionTarget: z.enum(["question", "answer"]),
   actionId: z.string().min(1),
   authorId: z.string().min(1),
@@ -238,9 +224,7 @@ export const ProfileSchema = z.object({
       message: "Name must be at least 3 characters.",
     })
     .max(130, { message: "Name musn't be longer then 130 characters." }),
-  username: z
-    .string()
-    .min(3, { message: "username musn't be longer then 100 characters." }),
+  username: z.string().min(3, { message: "username musn't be longer then 100 characters." }),
   portfolio: z.string().url({ message: "Please provide valid URL" }),
   location: z.string().min(3, { message: "Please provide proper location" }),
   bio: z.string().min(3, {
@@ -255,9 +239,7 @@ export const UpdateUserSchema = z.object({
       message: "Name must be at least 3 characters.",
     })
     .max(130, { message: "Name musn't be longer then 130 characters." }),
-  username: z
-    .string()
-    .min(3, { message: "username musn't be longer then 100 characters." }),
+  username: z.string().min(3, { message: "username musn't be longer then 100 characters." }),
   portfolio: z.string().url({ message: "Please provide valid URL" }),
   location: z.string().min(3, { message: "Please provide proper location" }),
   bio: z.string().min(3, {

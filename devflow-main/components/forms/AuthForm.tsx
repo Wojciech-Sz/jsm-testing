@@ -31,12 +31,11 @@ const AuthForm = <T extends FieldValues>({ schema, defaultValues, onSubmit, form
   const handleSubmit: SubmitHandler<T> = async (data) => {
     const result = (await onSubmit(data)) as ActionResponse;
 
-    if (result?.success) {
+    if (result?.success === true) {
       toast({
         title: "Success",
         description: formType === "SIGN_IN" ? "You have successfully signed in." : "You have successfully signed up.",
       });
-
       router.replace(ROUTES.HOME);
     } else {
       toast({
