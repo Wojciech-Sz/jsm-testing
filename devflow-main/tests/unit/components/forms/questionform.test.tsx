@@ -1,7 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { mockRouter, mockToast, resetMocks, mockEditorMethods, MockEditor } from "@/tests/mocks";
+import { mockRouter, mockToast, resetMocks, MockEditor } from "@/tests/mocks";
 import QuestionForm from "@/components/forms/QuestionForm";
-import { AskQuestionSchema } from "@/lib/validations";
 import userEvent from "@testing-library/user-event";
 import { createQuestion } from "@/lib/actions/question.action";
 

@@ -260,7 +260,7 @@ describe("AuthForm", () => {
       it("should submit the form with valid inputs", async () => {
         const onSubmit = jest
           .fn()
-          .mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({ success: true }), 1000)));
+          .mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({ success: true }), 100)));
         render(
           <AuthForm
             formType="SIGN_UP"
