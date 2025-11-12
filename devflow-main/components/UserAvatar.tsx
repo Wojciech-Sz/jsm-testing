@@ -12,13 +12,7 @@ interface Props {
   fallbackClassName?: string;
 }
 
-function UserAvatar({
-  id,
-  name,
-  imageUrl,
-  className = "h-9 w-9",
-  fallbackClassName,
-}: Props) {
+function UserAvatar({ id, name, imageUrl, className = "h-9 w-9", fallbackClassName }: Props) {
   const initials = name
     .split(" ")
     .map((word) => word[0])
@@ -30,19 +24,10 @@ function UserAvatar({
     <Link href={`/profile/${id}`}>
       <Avatar className={cn("relative", className)}>
         {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={`${name}'s avatar`}
-            fill
-            className="object-cover"
-            quality={100}
-          />
+          <Image src={imageUrl} alt={`${name}'s avatar`} fill className="object-cover" quality={100} />
         ) : (
           <AvatarFallback
-            className={cn(
-              "primary-gradient font-space-grotesk font-bold tracking-wider text-white",
-              fallbackClassName
-            )}
+            className={cn("primary-gradient font-space-grotesk font-bold tracking-wider text-white", fallbackClassName)}
           >
             {initials}
           </AvatarFallback>

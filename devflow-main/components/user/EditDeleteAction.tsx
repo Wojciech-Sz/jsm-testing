@@ -76,16 +76,12 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete your
-              {type === "Question" ? " question" : " answer"} and remove your
-              data from our servers.
+              {type === "Question" ? " question" : " answer"} and remove your data from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="btn">Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="border-primary-100! bg-primary-500! text-light-700!"
-            >
+            <AlertDialogAction onClick={handleDelete} className="border-primary-100! bg-primary-500! text-light-700!">
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>
